@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gsm.dogsworld.models.Breed
 import com.gsm.dogsworld.screens.components.AnimatedShimmer
 import com.gsm.dogsworld.screens.components.ItemLayout
+import com.gsm.dogsworld.screens.components.NoNetworkUI
 import com.gsm.dogsworld.viewmodels.BreedsViewModel
 
 @Composable
@@ -20,21 +21,27 @@ fun BreedListScreen(onClick: (breedItemJson: Breed) -> Unit) {
     val breedsViewModel: BreedsViewModel = hiltViewModel()
     val breeds = breedsViewModel.breeds.collectAsState()
 
+    val isConnected = breedsViewModel.isConnected.collectAsState()
+
     Column {
-        if (breeds.value.isEmpty()) {
-            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                items(6) {
-                    AnimatedShimmer()
-                }
-            }
+        if (!isConnected.value) {
+            NoNetworkUI()
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(2.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                items(breeds.value) {
-                    ItemLayout(item = it, onClick)
+            if (breeds.value.isEmpty()) {
+                LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                    items(6) {
+                        AnimatedShimmer()
+                    }
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(2.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(breeds.value) {
+                        ItemLayout(item = it, onClick)
+                    }
                 }
             }
         }

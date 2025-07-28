@@ -82,4 +82,8 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    // Lifecycle Process
+    implementation(libs.androidx.lifecycle.process)
+    // Lottie
+    implementation(libs.lottie.compose)
 }

@@ -14,6 +14,7 @@ import com.gsm.dogsworld.models.CategoryItem
 import com.gsm.dogsworld.screens.components.AnimatedShimmer
 import com.gsm.dogsworld.screens.components.Header
 import com.gsm.dogsworld.screens.components.ItemLayout
+import com.gsm.dogsworld.screens.components.NoNetworkUI
 import com.gsm.dogsworld.viewmodels.DogsViewModel
 
 @Composable
@@ -21,25 +22,31 @@ fun CategoryScreen(onClick: (categoryName: CategoryItem) -> Unit) {
     val categoryViewModel: DogsViewModel = hiltViewModel()
     val categories = categoryViewModel.categories.collectAsState()
 
+    val isConnected = categoryViewModel.isConnected.collectAsState()
+
     Column {
         // Header - Create your header here
         Header()
 
-        if (categories.value.isEmpty()) {
-            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                items(4) {
-                    AnimatedShimmer()
-                }
-            }
+        if (!isConnected.value) {
+            NoNetworkUI()
         } else {
-            // Type of Dogs (i.e. Dog's Category)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(2.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                items(categories.value) {
-                    ItemLayout(item = it, onClick)
+            if (categories.value.isEmpty()) {
+                LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                    items(4) {
+                        AnimatedShimmer()
+                    }
+                }
+            } else {
+                // Type of Dogs (i.e. Dog's Category)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(2.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(categories.value) {
+                        ItemLayout(item = it, onClick)
+                    }
                 }
             }
         }
